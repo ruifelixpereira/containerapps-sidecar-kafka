@@ -42,5 +42,4 @@ openssl x509 -noout -text -in $PARENT.crt
 # Get a .pfx
 openssl pkcs12 -export -out $PARENT.pfx -inkey $PARENT.key -in $PARENT.crt
 
-cp $PARENT.crt $PARENT.key $PARENT.pfx ../grpc-test/GrpcGreeter/certs
-mv $PARENT.crt $PARENT.key $PARENT.pfx ../logger-sidecar/certs
+mv $PARENT.crt $PARENT.key $PARENT.pfx ../sidecar/src/certs

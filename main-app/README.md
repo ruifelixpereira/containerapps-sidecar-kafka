@@ -10,10 +10,11 @@ This backend Album API sample is available in other languages:
 
 ## Test locally
 
+```bash
 cd src
 docker build -t albumapi:v1 .
 
 docker run -d --name albumapi -p 8080:8080 albumapi:v1
 
 curl http://localhost:8080/albums
-
+```

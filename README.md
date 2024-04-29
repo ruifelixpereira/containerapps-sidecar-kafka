@@ -34,13 +34,10 @@ apt-get update && apt-get install -y curl
 
 curl http://main-app:8080/albums
 
-![alt text](image-3.png)
+![alt text](docs/assets/compose.png)
 
+![alt text](docs/assets/ps.png)
 
-![alt text](image.png)
+![alt text](docs/assets/curl.png)
 
-![alt text](image-2.png)
-
-![alt text](image-1.png)
-
-![alt text](image-4.png)
+![alt text](docs/assets/compose-out.png)
