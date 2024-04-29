@@ -17,3 +17,30 @@ Sample output:
 ![alt text](docs/assets/certs.png)
 
 
+## Build
+
+
+## Run and test locally
+
+```bash
+docker-compose up
+
+curl -k https://localhost:5001/hello
+```
+
+docker exec -it container-apps-sidecar_main-app_1 /bin/bash
+
+apt-get update && apt-get install -y curl
+
+curl http://main-app:8080/albums
+
+![alt text](image-3.png)
+
+
+![alt text](image.png)
+
+![alt text](image-2.png)
+
+![alt text](image-1.png)
+
+![alt text](image-4.png)

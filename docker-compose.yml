@@ -1,0 +1,16 @@
+version: '3'
+services:
+  sidecar:
+    image: utilitysidecar:v1
+    ports:
+      - "7107:7107"
+    networks:
+      grpc_network:
+  main-app:
+    image: albumapi:v1
+    networks:
+      grpc_network:
+    depends_on:
+      - sidecar
+networks:
+  grpc_network:

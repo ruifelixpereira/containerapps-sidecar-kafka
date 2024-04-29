@@ -1,3 +1,18 @@
+using System.Threading.Tasks;
+using Grpc.Net.Client;
+using albumapi_csharp;
+
+// Return "true" to allow certificates that are untrusted/invalid
+var httpHandler = new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback =
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+};
+
+// The port number must match the port of the gRPC server.
+using var channel = GrpcChannel.ForAddress("https://sidecar:7107", new GrpcChannelOptions { HttpHandler = httpHandler });
+var client = new Logger.LoggerClient(channel);
+
 var builder = WebApplication.CreateBuilder();
 
 // Add services to the container.
@@ -5,7 +20,8 @@ var builder = WebApplication.CreateBuilder();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddDefaultPolicy(builder =>
     {
         builder.AllowAnyOrigin();
@@ -30,9 +46,15 @@ app.MapGet("/", async context =>
     await context.Response.WriteAsync("Hit the /albums endpoint to retrieve a list of albums!");
 });
 
-app.MapGet("/albums", () =>
+app.MapGet("/albums", async () =>
 {
-    return Album.GetAll();
+    var result = Album.GetAll(); 
+
+    // Send log event to sidecar
+    var reply = await Task.FromResult( client.SendLogEvent( new LogEventRequest { Message = "loooooooooooooooooooooog" } ) );
+    Console.WriteLine("Return from sidecar: " + reply.Message);
+
+    return result;
 })
 .WithName("GetAlbums");
 
@@ -40,8 +62,9 @@ app.Run();
 
 record Album(int Id, string Title, string Artist, double Price, string Image_url)
 {
-     public static List<Album> GetAll(){
-         var albums = new List<Album>(){
+    public static List<Album> GetAll()
+    {
+        var albums = new List<Album>(){
             new Album(1, "You, Me and an App Id", "Daprize", 10.99, "https://aka.ms/albums-daprlogo"),
             new Album(2, "Seven Revision Army", "The Blue-Green Stripes", 13.99, "https://aka.ms/albums-containerappslogo"),
             new Album(3, "Scale It Up", "KEDA Club", 13.99, "https://aka.ms/albums-kedalogo"),
@@ -50,6 +73,6 @@ record Album(int Id, string Title, string Artist, double Price, string Image_url
             new Album(6, "Sweet Container O' Mine", "Guns N Probeses", 14.99, "https://aka.ms/albums-containerappslogo")
          };
 
-        return albums; 
-     }
+        return albums;
+    }
 }

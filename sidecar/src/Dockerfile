@@ -13,6 +13,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "albumapi_csharp.dll"]
+COPY --from=build-env /app/certs ./certs
+EXPOSE 7107
+ENV ASPNETCORE_URLS=https://+:7107
+ENTRYPOINT ["dotnet", "UtilitySidecar.dll"]

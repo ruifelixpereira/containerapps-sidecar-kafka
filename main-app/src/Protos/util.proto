@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "albumapi_csharp";
+
+package util;
+
+// The logger service definition.
+service Logger {
+  // Sends a log event
+  rpc SendLogEvent (LogEventRequest) returns (LogEventReply);
+}
+
+// The request message containing the log event.
+message LogEventRequest {
+  string message = 1;
+}
+
+// The response message of the log event.
+message LogEventReply {
+  string message = 1;
+}
