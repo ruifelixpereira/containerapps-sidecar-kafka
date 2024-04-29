@@ -1,0 +1,16 @@
+version: '3'
+services:
+  greeter-service:
+    image: greeterservice:v1
+    ports:
+      - "7106:7106"
+    networks:
+      grpc_network:
+  greeter-client:
+    image: greeterclient:v1
+    networks:
+      grpc_network:
+    depends_on:
+      - greeter-service
+networks:
+  grpc_network:

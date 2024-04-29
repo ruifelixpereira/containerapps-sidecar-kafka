@@ -1,19 +1,19 @@
-# Azure Container Apps Album API
+# Container Apps with Sidecar using Grpc and Kafka (Event Hubs)
 
-This is the companion repository for the [Azure Container Apps code-to-cloud quickstart](https://docs.microsoft.com/en-us/azure/container-apps/quickstart-code-to-cloud?tabs=bash%2Ccsharp&pivots=acr-remote).
+This is a simple example of a containerized application that uses 2 containers, the main application and a sidecar to logs events to a Kafka (Event Hubs) server. The application is written in .Net and uses the gRPC framework to communicate with the sidecar. The sidecar is written in .Net and uses the Confluent Kafka client to communicate with the Kafka server (Azure Event Hubs).
 
-This backend Album API sample is available in other languages:
+![alt text](docs/assets/arch.png)
 
-| [JavaScript](https://github.com/azure-samples/containerapps-albumapi-javascript) | [Go](https://github.com/azure-samples/containerapps-albumapi-go) | [Python](https://github.com/azure-samples/containerapps-albumapi-python) | [Java](https://github.com/azure-samples/containerapps-albumapi-java) |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+## Generate certiticates
 
+Grpc uses HTTPS and requires TLS. The following commands generate self-signed certificates required for the application.
 
-## Test locally
+```bash
+scripts/generate-certs.sh
+```
 
-cd src
-docker build -t albumapi:v1 .
+Sample output:
 
-docker run -d --name albumapi -p 8080:8080 albumapi:v1
+![alt text](docs/assets/certs.png)
 
-curl http://localhost:8080/albums
 
