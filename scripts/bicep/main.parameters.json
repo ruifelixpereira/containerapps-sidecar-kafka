@@ -1,0 +1,17 @@
+{
+    "containerRegistryName": {
+        "value": "<CONTAINER_REGISTRY_NAME>"
+    },
+    "mainAppName": {
+        "value": "albumapi"
+    },
+    "sidecarName": {
+        "value": "utilitysidecar"
+    },
+    "mainAppImage": {
+        "value": "<CONTAINER_REGISTRY_NAME>.azurecr.io/albumapi:v1.7"
+    },
+    "sidecarImage": {
+        "value": "<CONTAINER_REGISTRY_NAME>.azurecr.io/utilitysidecar:v1.7"
+    }
+}

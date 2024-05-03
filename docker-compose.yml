@@ -1,16 +1,23 @@
 version: '3'
 services:
   sidecar:
-    image: utilitysidecar:v1
+    image: utilitysidecar:v1.7
     ports:
-      - "7107:7107"
+      - "7001:7001"
     networks:
       grpc_network:
+    environment:
+      EH_FQDN: ${EH_FQDN}
+      EH_CONNECTION_STRING: ${EH_CONNECTION_STRING}
   main-app:
-    image: albumapi:v1
+    image: albumapi:v1.7
+    ports:
+      - "8080:8080"
     networks:
       grpc_network:
     depends_on:
       - sidecar
+    environment:
+      SIDECAR_URI: https://sidecar:7001
 networks:
   grpc_network:

@@ -14,6 +14,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 COPY --from=build-env /app/certs ./certs
-EXPOSE 7107
-ENV ASPNETCORE_URLS=https://+:7107
+EXPOSE 7001
 ENTRYPOINT ["dotnet", "UtilitySidecar.dll"]

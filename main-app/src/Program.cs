@@ -1,19 +1,16 @@
 using System.Threading.Tasks;
+using Grpc.Core;
 using Grpc.Net.Client;
+using Grpc.Net.Client.Configuration;
 using albumapi_csharp;
 
-// Return "true" to allow certificates that are untrusted/invalid
-var httpHandler = new HttpClientHandler
-{
-    ServerCertificateCustomValidationCallback =
-        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-};
+var builder = WebApplication.CreateBuilder();
 
 // The port number must match the port of the gRPC server.
-using var channel = GrpcChannel.ForAddress("https://sidecar:7107", new GrpcChannelOptions { HttpHandler = httpHandler });
+//var sidecarUri = builder.Configuration["SIDECAR_URI"] ?? "https://localhost:5002";
+var sidecarUri = Environment.GetEnvironmentVariable("SIDECAR_URI") ?? "https://localhost:5001";
+using var channel = CreateChannel(sidecarUri);
 var client = new Logger.LoggerClient(channel);
-
-var builder = WebApplication.CreateBuilder();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -60,6 +57,37 @@ app.MapGet("/albums", async () =>
 
 app.Run();
 
+
+static GrpcChannel CreateChannel(string grpcServerUri)
+{
+    // Retry policy for gRPC client
+    var methodConfig = new MethodConfig
+    {
+        Names = { MethodName.Default },
+        RetryPolicy = new RetryPolicy
+        {
+            MaxAttempts = 5,
+            InitialBackoff = TimeSpan.FromSeconds(0.5),
+            MaxBackoff = TimeSpan.FromSeconds(0.5),
+            BackoffMultiplier = 1,
+            RetryableStatusCodes = { StatusCode.Unavailable }
+        }
+    };
+
+    // Return "true" to allow certificates that are untrusted/invalid
+    var httpHandler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+
+    return GrpcChannel.ForAddress(grpcServerUri, new GrpcChannelOptions
+    {
+        ServiceConfig = new ServiceConfig { MethodConfigs = { methodConfig } },
+        HttpHandler = httpHandler
+    });
+}
+
 record Album(int Id, string Title, string Artist, double Price, string Image_url)
 {
     public static List<Album> GetAll()
@@ -76,3 +104,5 @@ record Album(int Id, string Title, string Artist, double Price, string Image_url
         return albums;
     }
 }
+
+
